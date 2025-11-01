@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.CreditDebitFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingVertical="15dp"
+            android:text="Cash Machine Transactions"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/llMainBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle">
+
+            <Button
+                android:id="@+id/btnCredit"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:background="@color/white_gray"
+                android:text="Credit" />
+
+            <Button
+                android:id="@+id/btndebit"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@color/white_gray"
+                android:text="Debit" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/creditView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical"
+            android:padding="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/llMainBtn">
+
+            <TextView
+                android:id="@+id/tv500"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="500 x"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/edit_500"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint=""
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv500"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv500"
+                app:layout_constraintTop_toTopOf="@id/tv500" />
+
+            <TextView
+                android:id="@+id/tv200"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="200 x"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv500" />
+
+            <EditText
+                android:id="@+id/edit_200"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint=""
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv200"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv200"
+                app:layout_constraintTop_toTopOf="@id/tv200" />
+
+            <TextView
+                android:id="@+id/tv100"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="100 x"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv200" />
+
+            <EditText
+                android:id="@+id/edit_100"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint=""
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv100"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv100"
+                app:layout_constraintTop_toTopOf="@id/tv100" />
+
+
+            <TextView
+                android:id="@+id/tv50"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="50 x"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv100" />
+
+            <EditText
+                android:id="@+id/edit_50"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint=""
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv50"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv50"
+                app:layout_constraintTop_toTopOf="@id/tv50" />
+
+            <TextView
+                android:id="@+id/tv20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="20 x"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv50" />
+
+            <EditText
+                android:id="@+id/edit_20"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint=""
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv20"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv20"
+                app:layout_constraintTop_toTopOf="@id/tv20" />
+
+
+            <TextView
+                android:id="@+id/tv10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="10 x"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv20" />
+
+            <EditText
+                android:id="@+id/edit_10"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint=""
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv10"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv10"
+                app:layout_constraintTop_toTopOf="@id/tv10" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <EditText
+            android:id="@+id/edtDebitAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Enter Amount"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/llMainBtn" />
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="100dp"
+            android:gravity="center"
+            android:text="Submit"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
