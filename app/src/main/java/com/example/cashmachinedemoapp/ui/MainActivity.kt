@@ -12,7 +12,7 @@ import com.example.cashmachinedemoapp.R
 import com.example.cashmachinedemoapp.databinding.ActivityMainBinding
 import com.example.cashmachinedemoapp.fragments.CreditDebitFragment
 import com.example.cashmachinedemoapp.fragments.HistoryFragment
-import com.example.cashmachinedemoapp.fragments.SummayFragment
+import com.example.cashmachinedemoapp.fragments.SummaryFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.report -> {
-                    loadFragment(SummayFragment())
+                    loadFragment(SummaryFragment())
                     true
                 }
                 else -> false

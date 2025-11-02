@@ -10,7 +10,7 @@ import com.example.cashmachinedemoapp.model.DenominationEntity
 import com.example.cashmachinedemoapp.model.Transaction
 
 @Dao
-interface  TransactionDao {
+interface TransactionDao {
     @Insert
     fun insertAllDenomination(denominationEntity: List<DenominationEntity>)
 
@@ -28,5 +28,4 @@ interface  TransactionDao {
 
     @Query("SELECT * FROM `transaction` ORDER BY timestamp DESC")
     fun getAllTransactions(): LiveData<List<Transaction>>
-
 }

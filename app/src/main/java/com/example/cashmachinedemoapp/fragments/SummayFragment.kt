@@ -1,60 +1,97 @@
 package com.example.cashmachinedemoapp.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.cashmachinedemoapp.R
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.cashmachinedemoapp.databinding.FragmentSummayBinding
+import com.example.cashmachinedemoapp.databinding.ItemDenominationBinding
+import com.example.cashmachinedemoapp.model.DenominationEntity
+import com.example.cashmachinedemoapp.ui.CashMachineViewmodel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class SummaryFragment : Fragment() {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SummayFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class SummayFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentSummayBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: CashMachineViewmodel by activityViewModels()
+    private val adapter = DenominationAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_summay, container, false)
+    ): View {
+        _binding = FragmentSummayBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerView()
+        observeData()
+    }
+
+    private fun setupRecyclerView() {
+        binding.recyclerViewDenominations.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerViewDenominations.adapter = adapter
+    }
+
+    private fun observeData() {
+        viewModel.denominationEntries.observe(viewLifecycleOwner) { denominations ->
+            adapter.submitList(denominations)
+        }
+
+        viewModel.totalBalance.observe(viewLifecycleOwner) { balance ->
+            binding.txtTotalBalance.text = "₹$balance"
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SummayFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SummayFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        fun newInstance() = SummaryFragment()
+    }
+}
+
+class DenominationAdapter : RecyclerView.Adapter<DenominationAdapter.DenominationViewHolder>() {
+
+    private var denominations = emptyList<DenominationEntity>()
+
+    class DenominationViewHolder(private val binding: ItemDenominationBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(denomination: DenominationEntity) {
+            binding.txtDenomination.text = "₹${denomination.value}"
+            binding.txtCount.text = "Count: ${denomination.count}"
+            binding.txtSubtotal.text = "Subtotal: ₹${denomination.value * denomination.count}"
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DenominationViewHolder {
+        val binding = ItemDenominationBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return DenominationViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: DenominationViewHolder, position: Int) {
+        holder.bind(denominations[position])
+    }
+
+    override fun getItemCount() = denominations.size
+
+    fun submitList(newList: List<DenominationEntity>) {
+        denominations = newList.sortedByDescending { it.value }
+        notifyDataSetChanged()
     }
 }

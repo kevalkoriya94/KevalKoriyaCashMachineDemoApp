@@ -3,7 +3,7 @@ package com.example.cashmachinedemoapp.db
 import androidx.lifecycle.LiveData
 import com.example.cashmachinedemoapp.model.DenominationEntity
 import com.example.cashmachinedemoapp.model.Transaction
-import com.example.cashmachinedemoapp.model.TranscationType
+import com.example.cashmachinedemoapp.model.TransactionType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Date
@@ -16,10 +16,10 @@ class CashMachineRepo(private val transactionDao: TransactionDao) {
     val transactions: LiveData<List<Transaction>> = transactionDao.getAllTransactions()
 
     init {
-        initialiseDenomination()
+        initializeDenomination()
     }
 
-    private fun initialiseDenomination() {
+    private fun initializeDenomination() {
         kotlin.runCatching {
             Thread {
                 val existing = transactionDao.getAllDenominationEntity()
@@ -27,7 +27,6 @@ class CashMachineRepo(private val transactionDao: TransactionDao) {
                     val initialList = denominationList.map {
                         DenominationEntity(it, 0)
                     }
-
                     transactionDao.insertAllDenomination(initialList)
                 }
             }.start()
@@ -40,67 +39,117 @@ class CashMachineRepo(private val transactionDao: TransactionDao) {
         }
     }
 
-    private suspend fun distributG(targetAmount: Int): Map<Int, Int>? =
+    private suspend fun distributeAmount(targetAmount: Int): Map<Int, Int>? =
         withContext(Dispatchers.IO) {
             var remaining = targetAmount
             val distribution = mutableMapOf<Int, Int>()
-            val curruncyInventory = transactionDao.getAllDenominationEntity().associate {
+            val currencyInventory = transactionDao.getAllDenominationEntity().associate {
                 it.value to it.count
             }
 
             for (note in denominationList) {
-                if (remaining == 0) {
-                    break
-                }
+                if (remaining == 0) break
 
-                val availableCount = curruncyInventory.getOrDefault(note, 0)
+                val availableCount = currencyInventory.getOrDefault(note, 0)
                 val neededCount = remaining / note
 
-                val Counttouse = minOf(neededCount, availableCount)
+                val countToUse = minOf(neededCount, availableCount)
 
-                if (Counttouse > 0) {
-                    distribution[note] = Counttouse
-                    remaining -= Counttouse * note
+                if (countToUse > 0) {
+                    distribution[note] = countToUse
+                    remaining -= countToUse * note
                 }
-
-                return@withContext if
-                                           (remaining == 0) distribution else null
             }
 
-        } as Map<Int, Int>?
+            return@withContext if (remaining == 0) distribution else null
+        }
 
-    suspend fun creditAmount(amount: Int): String? = withContext(Dispatchers.IO) {
-        if (amount <= 0)
-            return@withContext "Amount must be a positive number"
+    private suspend fun calculateCreditDistribution(amount: Int): Map<Int, Int> {
+        var remaining = amount
+        val distribution = mutableMapOf<Int, Int>()
 
+        for (note in denominationList) {
+            if (remaining == 0) break
+            val count = remaining / note
+            if (count > 0) {
+                distribution[note] = count
+                remaining %= note
+            }
+        }
 
-        if (amount % 10 != 0)
-            return@withContext "Amount must be a multiple of 10"
+        return distribution
+    }
 
-        val distribution = distributG(amount) ?: return@withContext "Internal error in distribution"
+    suspend fun creditAmount(amount: Int, denominationMap: Map<Int, Int>): String? = withContext(Dispatchers.IO) {
+        if (amount <= 0) return@withContext "Amount must be a positive number"
+        if (amount % 10 != 0) return@withContext "Amount must be a multiple of 10"
 
-        val curruntDenomination = transactionDao.getAllDenominationEntity().associateBy {
+        val currentDenomination = transactionDao.getAllDenominationEntity().associateBy {
             it.value
         }.toMutableMap()
 
-        val denominationtoUpdate = mutableListOf<DenominationEntity>()
+        val denominationToUpdate = mutableListOf<DenominationEntity>()
 
-        distribution.forEach { note, count ->
-            val entity = curruntDenomination[note] ?: DenominationEntity(note, 0)
-
-            denominationtoUpdate.add(entity.copy(count = entity.count + count))
+        denominationMap.forEach { (note, count) ->
+            if (count > 0) {
+                val entity = currentDenomination[note] ?: DenominationEntity(note, 0)
+                denominationToUpdate.add(entity.copy(count = entity.count + count))
+            }
         }
 
-        transactionDao.update(denominationtoUpdate)
-        val trasaction = Transaction(
-            type = TranscationType.CREDIT,
+        if (denominationToUpdate.isEmpty()) {
+            return@withContext "No denominations provided"
+        }
+
+        transactionDao.update(denominationToUpdate)
+
+        val transaction = Transaction(
+            type = TransactionType.CREDIT,
             amount = amount,
-            timestamp = Date().time, denominationBreakDown = distribution
+            timestamp = Date().time,
+            denominationBreakDown = denominationMap
         )
 
-
-        transactionDao.insertTransaction(trasaction)
+        transactionDao.insertTransaction(transaction)
         return@withContext null
     }
 
+    suspend fun debitAmount(amount: Int, denominationMap: Map<Int, Int>): String? = withContext(Dispatchers.IO) {
+        if (amount <= 0) return@withContext "Amount must be a positive number"
+        if (amount % 10 != 0) return@withContext "Amount must be a multiple of 10"
+
+        val totalBalance = getTotalBalance()
+        if (amount > totalBalance) return@withContext "Insufficient balance"
+
+        val currentDenomination = transactionDao.getAllDenominationEntity().associateBy {
+            it.value
+        }.toMutableMap()
+
+        val denominationToUpdate = mutableListOf<DenominationEntity>()
+
+        // Check if denominations are available
+        denominationMap.forEach { (note, count) ->
+            if (count > 0) {
+                val entity = currentDenomination[note] ?: return@withContext "Denomination ₹$note not found"
+                if (entity.count < count) return@withContext "Insufficient ₹$note notes. Available: ${entity.count}, Requested: $count"
+                denominationToUpdate.add(entity.copy(count = entity.count - count))
+            }
+        }
+
+        if (denominationToUpdate.isEmpty()) {
+            return@withContext "No denominations provided"
+        }
+
+        transactionDao.update(denominationToUpdate)
+
+        val transaction = Transaction(
+            type = TransactionType.DEBIT,
+            amount = amount,
+            timestamp = Date().time,
+            denominationBreakDown = denominationMap
+        )
+
+        transactionDao.insertTransaction(transaction)
+        return@withContext null
+    }
 }
