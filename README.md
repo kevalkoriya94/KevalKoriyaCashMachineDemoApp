@@ -1,4 +1,4 @@
-Cash Machine Demo App 💰
+## Cash Machine Demo App 💰
 A modern Android application that simulates a cash machine system with support for multiple denominations (₹500, ₹200, ₹100, ₹50, ₹20, ₹10). Built with MVVM architecture, Room Database, and Jetpack Compose.
 
 📱 Screenshots
@@ -16,7 +16,7 @@ A modern Android application that simulates a cash machine system with support f
 ### Total Balance Screen
 ![Main Screen](app/src/main/res/drawable/screenshot_balace.png)
 
-✨ Features
+## ✨ Features
 💰 Credit Transactions: Add money with specific denomination breakdown
 
 💸 Debit Transactions: Withdraw money with automatic denomination distribution
@@ -31,7 +31,7 @@ A modern Android application that simulates a cash machine system with support f
 
 🔄 Auto-calculation: Real-time total calculation as you input denominations
 
-🛠️ Tech Stack
+## 🛠️ Tech Stack
 Kotlin - Programming language
 
 MVVM Architecture - Model-View-ViewModel pattern
@@ -48,7 +48,7 @@ Material Design - Modern UI components
 
 AndroidX - Latest Android libraries
 
-👨‍💻 Developer
+## 👨‍💻 Developer
 Built with ❤️ using modern Android development practices. Perfect for learning MVVM, Room Database, and clean architecture patterns.
 
 📞 Contact
