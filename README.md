@@ -1,7 +1,6 @@
 ## Cash Machine Demo App 💰
 A modern Android application that simulates a cash machine system with support for multiple denominations (₹500, ₹200, ₹100, ₹50, ₹20, ₹10). Built with MVVM architecture, Room Database, and Jetpack Compose.
 
-📱 Screenshots
 ## App Screenshots
 
 ### Credit Transaction
