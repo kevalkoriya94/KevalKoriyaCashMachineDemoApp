@@ -126,18 +126,32 @@ class CashMachineRepo(private val transactionDao: TransactionDao) {
         }.toMutableMap()
 
         val denominationToUpdate = mutableListOf<DenominationEntity>()
+        val distribution: Map<Int, Int>
 
-        // Check if denominations are available
-        denominationMap.forEach { (note, count) ->
-            if (count > 0) {
+        // If denominationMap is provided, use it; otherwise distribute automatically
+        if (denominationMap.isNotEmpty() && denominationMap.any { it.value > 0 }) {
+            // Validate manual denomination input
+            denominationMap.forEach { (note, count) ->
+                if (count > 0) {
+                    val entity = currentDenomination[note] ?: return@withContext "Denomination ₹$note not found"
+                    if (entity.count < count) return@withContext "Insufficient ₹$note notes. Available: ${entity.count}, Requested: $count"
+                    denominationToUpdate.add(entity.copy(count = entity.count - count))
+                }
+            }
+            distribution = denominationMap
+        } else {
+            // Automatic distribution
+            val autoDistribution = distributeAmount(amount) ?: return@withContext "Cannot distribute amount with available denominations"
+
+            autoDistribution.forEach { (note, count) ->
                 val entity = currentDenomination[note] ?: return@withContext "Denomination ₹$note not found"
-                if (entity.count < count) return@withContext "Insufficient ₹$note notes. Available: ${entity.count}, Requested: $count"
                 denominationToUpdate.add(entity.copy(count = entity.count - count))
             }
+            distribution = autoDistribution
         }
 
         if (denominationToUpdate.isEmpty()) {
-            return@withContext "No denominations provided"
+            return@withContext "No denominations available for distribution"
         }
 
         transactionDao.update(denominationToUpdate)
@@ -146,7 +160,7 @@ class CashMachineRepo(private val transactionDao: TransactionDao) {
             type = TransactionType.DEBIT,
             amount = amount,
             timestamp = Date().time,
-            denominationBreakDown = denominationMap
+            denominationBreakDown = distribution
         )
 
         transactionDao.insertTransaction(transaction)

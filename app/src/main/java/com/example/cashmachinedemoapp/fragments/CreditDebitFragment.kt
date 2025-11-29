@@ -87,9 +87,11 @@ class CreditDebitFragment : Fragment() {
         if (type == TransactionType.CREDIT) {
             binding.btnCredit.setBackgroundColor(requireContext().getColor(android.R.color.holo_green_light))
             binding.btndebit.setBackgroundColor(requireContext().getColor(android.R.color.darker_gray))
+            binding.amountInputLayout.visibility = View.GONE
         } else {
             binding.btndebit.setBackgroundColor(requireContext().getColor(android.R.color.holo_red_light))
             binding.btnCredit.setBackgroundColor(requireContext().getColor(android.R.color.darker_gray))
+            binding.amountInputLayout.visibility = View.VISIBLE
         }
     }
 

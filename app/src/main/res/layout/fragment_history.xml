@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/item_transaction" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txtEmptyHistory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
